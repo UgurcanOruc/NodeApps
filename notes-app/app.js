@@ -1,3 +1,7 @@
-const fs = require('fs');
+// const getNotes = require('./notes');
+const chalk = require('chalk');
 
-fs.appendFileSync('notes.txt', ' I live in Ankara.');
+// const message = getNotes(); 
+// console.log(message);
+
+console.log(chalk.bold.inverse.green('Success!'))
