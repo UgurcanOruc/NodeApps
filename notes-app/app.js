@@ -1,7 +1,37 @@
-// const getNotes = require('./notes');
-const chalk = require('chalk');
+const chalk = require("chalk");
+const yargs = require('yargs');
+const getNotes = require("./notes");
 
-// const message = getNotes(); 
-// console.log(message);
+yargs.command({
+    command: 'add',
+    describe: 'Add a new note',
+    handler: function () {
+        console.log('Adding a new note!')
+    }
+});
 
-console.log(chalk.bold.inverse.green('Success!'))
+yargs.command({
+  command: "remove",
+  describe: "Remove a note",
+  handler: function () {
+    console.log("Removing the note!");
+  },
+});
+
+yargs.command({
+  command: "list",
+  describe: "List notes",
+  handler: function () {
+    console.log("Listing notes!");
+  },
+});
+
+yargs.command({
+  command: "read",
+  describe: "Read note",
+  handler: function () {
+    console.log("Read a note!");
+  },
+});
+
+console.log(yargs.argv);
