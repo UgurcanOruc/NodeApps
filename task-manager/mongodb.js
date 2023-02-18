@@ -8,51 +8,48 @@ async function main() {
   try {
     await client.connect();
     console.log("Connected");
-
-    await insertUser(client, {
-      _id: new ObjectId(),
-      name: "Vicdansiz Fikret",
+    await findManyBySearch(client, {
       age: 26,
     });
-
-    // await insertUsers(client, [
-    //   {
-    //     name: 'Jen',
-    //     age: 28
-    //   },
-    //   {
-    //     name: 'Gunther',
-    //     age: 29
-    //   }
-    // ]);
-
-    // await insertTasks(client, [
-    //   {
-    //     description: 'Clean the house.',
-    //     completed: true
-    //   },
-    //   {
-    //     desvription: 'Renew inspection',
-    //     completed: false
-    //   },
-    //   {
-    //     description: 'Pot plants',
-    //     completed: false
-    //   }
-    // ]);
   } catch (e) {
     console.error("Unable to connect to database.");
   } finally {
     client.close();
   }
+}
 
-  async function listDatabases(client) {
-    const dbList = await client.db().admin().listDatabases();
-    console.log("Databases:");
-    dbList.databases.forEach((db) => {
-      console.log(db.name);
+async function listDatabases(client) {
+  const dbList = await client.db().admin().listDatabases();
+  console.log("Databases:");
+  dbList.databases.forEach((db) => {
+    console.log(db.name);
+  });
+}
+
+
+
+async function findOneBySearch(client, search) {
+  client
+    .db(databaseName)
+    .collection("users")
+    .findOne(search, (error, user) => {
+      if (error) {
+        return console.log("Unable to fetch");
+      }
+      console.log(user);
     });
-  }
+}
+
+async function findManyBySearch(client, search) {
+  client
+    .db(databaseName)
+    .collection("users")
+    .find(search).toArray((error, users) => {
+      if (error) {
+        return console.log("Unable to fetch");
+      }
+      console.log(users);
+    });
 }
 
 async function insertUser(client, user) {
