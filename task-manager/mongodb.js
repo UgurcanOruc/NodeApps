@@ -4,13 +4,13 @@ const uri =
 const client = MongoClient(uri);
 const databaseName = "task-manager";
 
+main().catch(console.error);
+
 async function main() {
   try {
     await client.connect();
     console.log("Connected");
-    await findManyBySearch(client, {
-      age: 26,
-    });
+    await deleteMany({ age: 26 });
   } catch (e) {
     console.error("Unable to connect to database.");
   } finally {
@@ -26,7 +26,48 @@ async function listDatabases(client) {
   });
 }
 
+async function deleteMany(client, searchField) {
+  client
+    .db(databaseName)
+    .collection("users")
+    .deleteMany(searchField)
+    .then((result) => {
+      console.log(result);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
+async function updateOne(client, searchField, update) {
+  const updatePromise = client
+    .db(databaseName)
+    .collection("users")
+    .updateOne(searchField, update);
+
+  updatePromise
+    .then((result) => {
+      console.log(result);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+async function updateMany(client, searchField, update) {
+  const updatePromise = client
+    .db(databaseName)
+    .collection("users")
+    .updateMany(searchField, update);
+
+  updatePromise
+    .then((result) => {
+      console.log(result);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
 async function findOneBySearch(client, search) {
   client
@@ -44,7 +85,8 @@ async function findManyBySearch(client, search) {
   client
     .db(databaseName)
     .collection("users")
-    .find(search).toArray((error, users) => {
+    .find(search)
+    .toArray((error, users) => {
       if (error) {
         return console.log("Unable to fetch");
       }
@@ -87,5 +129,3 @@ async function insertTasks(client, tasks) {
       console.log(result.ops);
     });
 }
-
-main().catch(console.error);
