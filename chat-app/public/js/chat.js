@@ -4,29 +4,41 @@ const $messageForm = document.querySelector("#message-form");
 const $messageFormInput = $messageForm.querySelector("input");
 const $messageFormButton = $messageForm.querySelector("button");
 const $sendLocation = document.querySelector("#send-location");
-const $messages = document.querySelector('#messages');
+const $messages = document.querySelector("#messages");
 
-const messageTemplate = document.querySelector('#message-template').innerHTML;
-const locationMessageTemplate = document.querySelector('#location-message-template').innerHTML;
+const messageTemplate = document.querySelector("#message-template").innerHTML;
+const locationMessageTemplate = document.querySelector("#location-message-template").innerHTML;
 
 socket.on("message", (message) => {
-    const html = Mustache.render(messageTemplate, { message });
-    $messages.insertAdjacentHTML('beforeend', html);
+  const html = Mustache.render(messageTemplate, {
+    message: message.text,
+    createdAt: moment(message.createdAt).format('h:mm A'),
+  });
+
+  $messages.insertAdjacentHTML("beforeend", html);
 });
 
-socket.on('locationMessage', (url) => {
-    const html = Mustache.render(locationMessageTemplate, { url });
-    $messages.insertAdjacentHTML("beforeend", html);
+socket.on("locationMessage", (message) => {
+  const html = Mustache.render(locationMessageTemplate, {
+    url: message.url,
+    createdAt: moment(message.createdAt).format("h:mm A"),
+  });
+
+  $messages.insertAdjacentHTML("beforeend", html);
 });
 
 $messageForm.addEventListener("submit", (e) => {
   e.preventDefault();
+
   $messageFormButton.setAttribute("disabled", "disabled");
   const message = e.target.elements.message.value;
+  
   socket.emit("sendMessage", message, (error) => {
+    
     $messageFormButton.removeAttribute("disabled");
     $messageFormInput.value = "";
     $messageFormInput.focus();
+    
     return error
       ? console.log(error)
       : console.log(" Them message was delivered.");
@@ -39,8 +51,9 @@ $sendLocation.addEventListener("click", () => {
   }
 
   $sendLocation.setAttribute("disabled", "disabled");
+  
   navigator.geolocation.getCurrentPosition((position) => {
-    console.log(position);
+    
     socket.emit(
       "sendLocation",
       {
